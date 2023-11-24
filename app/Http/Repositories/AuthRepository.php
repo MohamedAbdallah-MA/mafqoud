@@ -29,7 +29,7 @@ class AuthRepository implements AuthInterface {
 
         if ($validation->fails())
         {
-            return $this->apiResponse('422' , 'validation error' , $validation->errors());
+            return $this->apiResponse('400' , 'validation error' , $validation->errors());
         }
         
         //* set image's names
@@ -52,7 +52,7 @@ class AuthRepository implements AuthInterface {
             'profile_image'             =>  $profileImageName ,
         ]);
 
-        return $this->apiResponse('200' , 'successfully registered' , $validation->errors());
+        return $this->apiResponse('200' , 'successfully registered' );
 
     }
 
@@ -65,7 +65,7 @@ class AuthRepository implements AuthInterface {
 
         if ($validations->fails())
         {
-            return $this->apiResponse(422 , 'validation error' ,$validations->errors()) ;
+            return $this->apiResponse(400 , 'validation error' ,$validations->errors()) ;
         }
 
         $credentials = $request->only('phone' , 'password');

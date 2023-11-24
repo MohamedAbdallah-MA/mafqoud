@@ -15,6 +15,14 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Http\Interfaces\AuthInterface',
             'App\Http\Repositories\AuthRepository'
         );
+        $this->app->bind(
+            'App\Http\Interfaces\UserInterface',
+            'App\Http\Repositories\UserRepository'
+        );
+        $this->app->bind(
+            'App\Http\Interfaces\MissingPeopleInterface',
+            'App\Http\Repositories\MissingPeopleRepository'
+        );
     }
 
     /**

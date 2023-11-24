@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
             [
                 'name'  =>  'mohamed' ,
                 'phone' =>  '+201125827873' ,
-                'password'  =>  Hash::make(1234) ,
+                'password'  =>  Hash::make('Mohamed2!') ,
                 'national_id_front_image'   =>  '1_national_id_front_image.png' ,
                 'national_id_back_image'   =>  '1_national_id_back_image.png' ,
                 'profile_image'   =>  '1_profile_image.png' ,

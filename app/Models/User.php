@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\MissingPerson;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -62,4 +63,34 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function missingPeople ()
+    {
+        return $this
+        ->belongsToMany(MissingPerson::class , 'missing_person_user' , 'searcher_id' , 'missing_person_id')
+        ->withTimestamps()
+        ->with('location');
+    }
+
+    public function foundedPeople ()
+    {
+        return $this
+        ->hasMany(FoundedPerson::class , 'founder_id' , 'id')
+        ->with('location');
+    }
+
+    public function getProfileImageAttribute ($value)
+    {
+        return '\images\user\profile_images\\'.$value;
+    }
+
+    public function getNationalIdFrontImageAttribute ($value)
+    {
+        return '\images\user\national_id_front_image\\'.$value;
+    }
+
+    public function getNationalIdBackImageAttribute ($value)
+    {
+        return '\images\user\national_id_back_image\\'.$value;
+    }
 }
