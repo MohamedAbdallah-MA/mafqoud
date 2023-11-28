@@ -15,16 +15,21 @@ class FoundedPerson extends Model
         "gender",
         "description",
         "location_id",
-        "searcher_id",
+        "founder_id",
         "founded_at",
     ];
 
-    public function searcher()
+    public function founder()
     {
-        return $this->belongsTo(User::class , 'searcher_id' , 'id');
+        return $this->belongsTo(User::class , 'founder_id' , 'id');
     }
 
-    public function getImageAttribure($value)
+    public function location()
+    {
+        return $this->belongsTo(Location::class , 'location_id' , 'id');
+    }
+
+    public function getImageAttribute($value)
     {
         return '\images\founded_people\\'.$value ;
     }

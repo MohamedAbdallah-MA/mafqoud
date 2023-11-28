@@ -23,13 +23,13 @@ class FoundedPeopleController extends Controller
         return $this->foundedPeopleInterface->getFoundedPeople();
     }
 
-    public function updateFoundedPersonInformation (request $request)
+    public function updateFoundedPersonData (request $request)
     {
-        return $this->foundedPeopleInterface->updateFoundedPersonInformation($request);
+        return $this->foundedPeopleInterface->updateFoundedPersonData($request);
     }
 
-    public function deleteFoundedPersonInformation ($foundedPersonId)
+    public function deleteFoundedPersonData ($foundedPersonId)
     {
-        return $this->foundedPeopleInterface->deleteFoundedPersonInformation($foundedPersonId);
+        return $this->foundedPeopleInterface->deleteFoundedPersonData($foundedPersonId);
     }
 }

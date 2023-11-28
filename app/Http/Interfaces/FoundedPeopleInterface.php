@@ -5,7 +5,7 @@ interface FoundedPeopleInterface {
 
     public function addFoundedPerson($request);
     public function getFoundedPeople();
-    public function updateFoundedPersonInformation($request);
-    public function deleteFoundedPersonInformation($foundedPersonId);
+    public function updateFoundedPersonData($request);
+    public function deleteFoundedPersonData($foundedPersonId);
 }
 ?>

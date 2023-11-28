@@ -19,7 +19,7 @@ class AuthRepository implements AuthInterface {
 
         //* validate the request 
         $validation = Validator::make($request->all() ,[
-            'name'                      =>  'required' ,
+            'name'                      =>  'required | min:3 | max:50 ' ,
             'phone'                     =>  'required | unique:users,phone' ,
             'password'                  =>  ['required' , new StrongPasswordRule] ,
             'national_id_front_image'   =>  'required | image | mimes:jpeg,png,jpg | max:2048' ,

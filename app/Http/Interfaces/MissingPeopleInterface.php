@@ -5,7 +5,7 @@ interface MissingPeopleInterface {
 
     public function addMissingPerson($request);
     public function getMissingPeople();
-    public function updateMissingPersonInformation($request);
-    public function deleteMissingPersonInformation($missingPersonId);
+    public function updateMissingPersonData($request);
+    public function deleteMissingPersonData($missingPersonId);
 }
 ?>

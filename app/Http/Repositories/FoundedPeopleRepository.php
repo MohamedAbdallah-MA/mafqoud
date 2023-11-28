@@ -4,6 +4,7 @@ namespace App\Http\Repositories;
 use App\Models\Location;
 use App\Models\FoundedPerson;
 use App\Http\Traits\ImageTrait;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Http\Traits\ApiResponseTrait;
 use Illuminate\Support\Facades\Validator;
@@ -16,13 +17,13 @@ class FoundedPeopleRepository implements FoundedPeopleInterface
     public function addFoundedPerson ($request)
     {
         $validation = Validator::make($request->all() , [
-            'name'          => 'required | min:5 | max:50' ,
-            'gender'        => 'required' ,
+            'name'          => 'required | min:3 | max:50' ,
+            'gender'        => 'required | in:male,female' ,
             'description'   => 'max:200' ,
             'country'       => 'required' ,
             'state'         => 'required' ,
             'city'          => 'required' ,
-            'founded_at'     => 'required' ,
+            'founded_at'    => 'required | date | before_or_equal:today' ,
             'image'         => 'required | image | mimes:jpeg,png,jpg | max:2048'
         ]);
 
@@ -36,18 +37,11 @@ class FoundedPeopleRepository implements FoundedPeopleInterface
         //     'image' => $image
         // ]);
         
-        $location = Location::where([['country' , $request->country] , ['state' , $request->state] , ['city' , $request->city] ])->get();
+        $location = Location::where([['country' , $request->country] , ['state' , $request->state] , ['city' , $request->city] ])->first();
         
-        if ($location->isEmpty())
+        if ( is_null($location) )
         {
             $location = Location::create([
-                'country'   => $request->country ,
-                'state'     => $request->state ,
-                'city'      => $request->city ,
-            ]);
-        }else
-        {
-            $location->update([
                 'country'   => $request->country ,
                 'state'     => $request->state ,
                 'city'      => $request->city ,
@@ -66,6 +60,7 @@ class FoundedPeopleRepository implements FoundedPeopleInterface
             'gender'        => $request->gender ,
             'description'   => $request->description ,
             'location_id'   => $location->id ,
+            'founder_id'    => Auth::user()->id ,
             'image'         => $imageName       
         ]);
 
@@ -74,100 +69,116 @@ class FoundedPeopleRepository implements FoundedPeopleInterface
 
     public function getFoundedPeople ()
     {
-        $founedPeople = FoundedPerson::with(['location' , 'searcher'])->get();
+        $foundedPeople = FoundedPerson::with(['location' , 'founder'])->get();
 
         $allFoundedPeople = [];
-        foreach($founedPeople as $foundedPerson)
+        if (! is_null($foundedPeople))
         {
-            $foundedPersonImage = asset(public_path($foundedPerson->image));
-            $foundedPeopleInformation = [
-                'id'            => $foundedPerson->id ,
-                'name'          => $foundedPerson->name ,
-                'gender'        => $foundedPerson->gender , 
-                'description'   => $foundedPerson->description ,
-                'country'       => $foundedPerson->location->country ,
-                'state'         => $foundedPerson->location->state ,
-                'city'          => $foundedPerson->location->city ,
-                'founded_at'    => $foundedPerson->founded_at ,
-                'image'         => $foundedPersonImage ,
-            ];
-
-
-                $seacherProfileImage = asset(public_path($foundedPerson->searcher->profile_image));
-                $searcherInformation = [
-                    'name'          => $foundedPerson->searcher->name ,
-                    'phone'         => $foundedPerson->searcher->phone ,
-                    'profile_image' => $seacherProfileImage ,
+            foreach($foundedPeople as $foundedPerson)
+            {
+                $foundedPersonImage = asset(public_path($foundedPerson->image));
+                $foundedPeopleInformation = [
+                    'id'            => $foundedPerson->id ,
+                    'name'          => $foundedPerson->name ,
+                    'gender'        => $foundedPerson->gender , 
+                    'description'   => $foundedPerson->description ,
+                    'country'       => $foundedPerson->location->country ,
+                    'state'         => $foundedPerson->location->state ,
+                    'city'          => $foundedPerson->location->city ,
+                    'founded_at'    => $foundedPerson->founded_at ,
+                    'image'         => $foundedPersonImage ,
                 ];
-
-
-            $allfoundedPeople[] = [
-                'founded_person'    => $foundedPeopleInformation ,
-                'searcher'         => $searcherInformation , 
-            ];
+    
+    
+                $founderProfileImage = asset(public_path($foundedPerson->founder->profile_image));
+                $founderInformation = [
+                    'name'          => $foundedPerson->founder->name ,
+                    'phone'         => $foundedPerson->founder->phone ,
+                    'profile_image' => $founderProfileImage ,
+                ];
+    
+    
+                $allFoundedPeople[] = [
+                    'founded_person'    => $foundedPeopleInformation ,
+                    'founder'           => $founderInformation , 
+                ];
+            }
         }
 
-        return $this->apiResponse(200 , 'all founded people with their searchers' , null , $allfoundedPeople);
+        return $this->apiResponse(200 , 'all founded people with their founders' , null , $allFoundedPeople);
     }
 
-    public function updateFoundedPersonInformation ($request)
+    public function updateFoundedPersonData ($request)
     {
         $validation = Validator::make($request->all() , [
             'id'            => 'required | exists:founded_people,id' ,
-            'name'          => 'required | min:5 | max:50' ,
-            'gender'        => 'required' ,
+            'name'          => 'min:3 | max:50' ,
+            'gender'        => 'in:male,female' ,
             'description'   => 'max:200' ,
-            'country'       => 'required' ,
-            'state'         => 'required' ,
-            'city'          => 'required' ,
-            'founded_at'    => 'required' ,
-            'image'         => 'required | image | mimes:jpeg,png,jpg | max:2048'
+            'founded_at'    => 'date | before_or_equal:today' ,
+            'image'         => 'image | mimes:jpeg,png,jpg | max:2048'
         ]);
 
         if($validation->fails())
         {
             return $this->apiResponse(422 , 'validation error' , $validation->errors());
         }
-        $location = Location::where([['country' , $request->country] , ['state' , $request->state] , ['city' , $request->city] ])->get();
-        if ($location->isEmpty())
+
+        if ($request->has('country') && $request->has('state') && $request->has('city'))
         {
-            $location = Location::create([
-                'country'   => $request->country ,
-                'state'     => $request->state ,
-                'city'      => $request->city ,
-            ]);
-        }else
-        {
-            $location->update([
-                'country'   => $request->country ,
-                'state'     => $request->state ,
-                'city'      => $request->city ,
-            ]);
+            $location = Location::where([['country' , $request->country] , ['state' , $request->state] , ['city' , $request->city] ])->first();
+
+            if ( is_null($location) )
+            {
+                $location = Location::create([
+                    'country'   => $request->country ,
+                    'state'     => $request->state ,
+                    'city'      => $request->city ,
+                ]);
+            }
         }
 
         $foundedPerson = FoundedPerson::find($request->id);
-
-        //* set image's names
-        $imageName = $this->setImageName($request->image , 'image');
-
-        //* upload images to server   
-        $this->uploadImage($request->image , $imageName , 'founded_people' , $foundedPerson->image);
-
+        if($request->has('image'))
+        {
+            //* set image's names
+            $imageName = $this->setImageName($request->image , 'image');
+            
+            //* upload images to server   
+            $this->uploadImage($request->image , $imageName , 'founded_people' , $foundedPerson->image);
+        }
+        
+        
         $foundedPerson->update([
-            'name'          => $request->name ,
-            'gender'        => $request->gender ,
-            'description'   => $request->description ,
-            'location_id'   => $location->id ,
-            'image'         => $imageName       
+            'name'          => ( $request->has('name')                                                              ? $request->name        : $foundedPerson->name ) ,
+            'gender'        => ( $request->has('gender')                                                            ? $request->gender      : $foundedPerson->gender ) ,
+            'description'   => ( $request->has('description')                                                       ? $request->description : $foundedPerson->description ) ,
+            'founded_at'    => ( $request->has('founded->at')                                                       ? $request->founded_at  : $foundedPerson->founded_at) ,
+            'location_id'   => ( ( $request->has('country') && $request->has('state') && $request->has('city') )    ? $location->id         : $foundedPerson->location_id ) ,
+            'image'         => ( $request->has('image')                                                             ? $imageName            : array_slice( explode('\\' , $foundedPerson->image) , -1  )[0] ) , 
         ]);
 
         return $this->apiResponse(200 , 'founded person information updated successfully' );
     }
 
-    public function deleteFoundedPersonInformation ($foundedPersonId)
+    public function deleteFoundedPersonData ($foundedPersonId)
     {
+        $validation = Validator::make(['id' => $foundedPersonId], [
+            'id' => 'required|exists:founded_people,id',
+        ]);
+
+        if ($validation->fails())
+        {
+            return $this->apiResponse(422 , 'validation error' , $validation->errors());
+        }
+
         $foundedPerson = FoundedPerson::find($foundedPersonId);
+
+        //* remove image from server
+        $this->unlinkImage($foundedPerson->image);
+
         $foundedPerson->delete();
+
         return $this->apiResponse(200 , 'founded person information deleted successfully');
     }
 }

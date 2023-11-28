@@ -23,6 +23,10 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Http\Interfaces\MissingPeopleInterface',
             'App\Http\Repositories\MissingPeopleRepository'
         );
+        $this->app->bind(
+            'App\Http\Interfaces\FoundedPeopleInterface',
+            'App\Http\Repositories\FoundedPeopleRepository'
+        );
     }
 
     /**

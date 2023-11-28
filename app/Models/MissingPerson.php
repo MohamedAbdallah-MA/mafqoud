@@ -30,7 +30,7 @@ class MissingPerson extends Model
         ->withTimestamps();
     }
 
-    public function getImageAttribure($value)
+    public function getImageAttribute($value)
     {
         return '\images\missing_people\\'.$value ;
     }

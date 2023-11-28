@@ -23,13 +23,13 @@ class MissingPeopleController extends Controller
         return $this->missingPeopleInterface->getMissingPeople();
     }
 
-    public function updateMissingPersonInformation (request $request)
+    public function updateMissingPersonData (request $request)
     {
-        return $this->missingPeopleInterface->updateMissingPersonInformation($request);
+        return $this->missingPeopleInterface->updateMissingPersonData($request);
     }
 
-    public function deleteMissingPersonInformation ($missingPersonId)
+    public function deleteMissingPersonData ($missingPersonId)
     {
-        return $this->missingPeopleInterface->deleteMissingPersonInformation($missingPersonId);
+        return $this->missingPeopleInterface->deleteMissingPersonData($missingPersonId);
     }
 }

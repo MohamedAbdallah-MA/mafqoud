@@ -18,26 +18,54 @@ use App\Http\Controllers\FoundedPeopleController;
 |
 */
 
-Route::post('/auth/register' , [AuthController::class , 'register']);
-Route::post('/auth/login' , [AuthController::class , 'login']);
+Route::post('/auth/register', [AuthController::class , 'register']);
+Route::post('/auth/login'   , [AuthController::class , 'login']);
 
 Route::group(['middleware' => 'auth'] , function() {
+
     Route::group(['prefix' => 'user'  , 'as' => 'user.'] , function() {
-        Route::get('/get/all', [UserController::class ,'getUsers'])->name('get.all');
-        Route::get('/get', [UserController::class ,'getUser'])->name('get');
-        Route::post('/update', [UserController::class ,'updateUserAccount'])->name('update.account');
-        Route::post('/delete', [UserController::class ,'deleteUserAccount'])->name('delete.account');
+
+        Route::get('/get/all'   , [UserController::class ,'getUsers'])
+        ->name('get.all');
+
+        Route::get('/get'       , [UserController::class ,'getUser'])
+        ->name('get');
+
+        Route::post('/update'   , [UserController::class ,'updateUserAccount'])
+        ->name('update.account');
+
+        Route::post('/delete'   , [UserController::class ,'deleteUserAccount'])
+        ->name('delete.account');
+
     });
     Route::group(['prefix' => 'missingPerson'  , 'as' => 'missingPerson.'] , function() {
-        Route::get('/get/all', [MissingPeopleController::class ,'getMissingPeople'])->name('get.all');
-        Route::get('/add', [MissingPeopleController::class ,'addMissingPerson'])->name('add');
-        Route::post('/update', [MissingPeopleController::class ,'updateMissingPerson'])->name('update');
-        Route::post('/delete', [MissingPeopleController::class ,'deleteMissingPerson'])->name('delete');
+
+        Route::post('/add'          , [MissingPeopleController::class ,'addMissingPerson'])
+        ->name('add');
+
+        Route::get('/get/all'       , [MissingPeopleController::class ,'getMissingPeople'])
+        ->name('get.all');
+        
+        Route::post('/update'       , [MissingPeopleController::class ,'updateMissingPersonData'])
+        ->name('update');
+        
+        Route::post('/delete/{id}'  , [MissingPeopleController::class ,'deleteMissingPersonData'])
+        ->name('delete');
+
     });
     Route::group(['prefix' => 'foundedPerson'  , 'as' => 'foundedPerson.'] , function() {
-        Route::get('/get/all', [FoundedPeopleController::class ,'getFoundedPeople'])->name('get.all');
-        Route::get('/add', [FoundedPeopleController::class ,'addFoundedPerson'])->name('add');
-        Route::post('/update', [FoundedPeopleController::class ,'updateFoundedPerson'])->name('update');
-        Route::post('/delete', [FoundedPeopleController::class ,'deleteFoundedPerson'])->name('delete');
+
+        Route::post('/add'          , [FoundedPeopleController::class ,'addFoundedPerson'])
+        ->name('add');
+
+        Route::get('/get/all'       , [FoundedPeopleController::class ,'getFoundedPeople'])
+        ->name('get.all');
+
+        Route::post('/update'       , [FoundedPeopleController::class ,'updateFoundedPersonData'])
+        ->name('update');
+
+        Route::post('/delete/{id}'   , [FoundedPeopleController::class ,'deleteFoundedPersonData'])
+        ->name('delete');
+        
     });
 });
