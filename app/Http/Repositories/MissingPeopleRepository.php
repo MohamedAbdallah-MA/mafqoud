@@ -95,6 +95,10 @@ class MissingPeopleRepository implements MissingPeopleInterface
                     $searchersInformation[] = [
                         'name'          => $searcher->name ,
                         'phone'         => $searcher->phone ,
+                        'gender'        => $searcher->gender ,
+                        'country'       => $searcher->country ,
+                        'state'         => $searcher->state ,
+                        'city'          => $searcher->city ,
                         'profile_image' => $seacherProfileImage ,
                     ];
                 }

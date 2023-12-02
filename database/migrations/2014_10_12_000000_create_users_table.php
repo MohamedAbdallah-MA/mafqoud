@@ -16,9 +16,18 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone')->unique();
             $table->string('password');
+            $table->enum('gender',['male' , 'female']);
             $table->string('national_id_front_image');
             $table->string('national_id_back_image');
             $table->string('profile_image');
+            $table->string('otp_code')->nullable();
+            $table->dateTime('otp_expire_time')->nullable();
+            $table->dateTime('phone_verified_at')->nullable();
+            $table->unsignedBigInteger('location_id')->nullable();
+            $table->foreign('location_id')
+            ->references('id')
+            ->on('locations')
+            ->onDelete('CASCADE');
             $table->rememberToken();
             $table->timestamps();
         });

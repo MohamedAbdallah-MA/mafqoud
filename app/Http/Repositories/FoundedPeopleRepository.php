@@ -94,6 +94,10 @@ class FoundedPeopleRepository implements FoundedPeopleInterface
                 $founderInformation = [
                     'name'          => $foundedPerson->founder->name ,
                     'phone'         => $foundedPerson->founder->phone ,
+                    'gender'        => $foundedPerson->gender ,
+                    'country'       => $foundedPerson->country ,
+                    'state'         => $foundedPerson->state ,
+                    'city'          => $foundedPerson->city ,
                     'profile_image' => $founderProfileImage ,
                 ];
     

@@ -15,6 +15,10 @@ class Location extends Model
         "city",
     ];
 
+    public function users()
+    {
+        return $this->hasMany(User::class , 'location_id' , 'id');
+    }
 
     public function missingPeople()
     {
@@ -25,4 +29,5 @@ class Location extends Model
     {
         return $this->hasMany(FoundedPerson::class , 'location_id' , 'id');
     }
+
 }

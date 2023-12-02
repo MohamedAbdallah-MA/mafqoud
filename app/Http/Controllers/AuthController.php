@@ -23,4 +23,16 @@ class AuthController extends Controller
     {
         return $this->authInterface->login($request);
     }
+    public function generateOtpCode (Request $request)
+    {
+        return $this->authInterface->generateOtpCode($request);
+    }
+    public function checkOtpCode (Request $request)
+    {
+        return $this->authInterface->checkOtpCode($request);
+    }
+    public function resetPassword (Request $request)
+    {
+        return $this->authInterface->resetPassword($request);
+    }
 }

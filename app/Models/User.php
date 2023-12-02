@@ -38,10 +38,12 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'phone',
         'password',
+        'otp_code',
+        'otp_expire_time',
+        'location_id',
         'national_id_front_image',
         'national_id_back_image',
         'profile_image',
-
     ];
 
     /**
@@ -52,6 +54,7 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'otp_code',
     ];
 
     /**
@@ -60,7 +63,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'phone_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -79,6 +82,21 @@ class User extends Authenticatable implements JWTSubject
         ->with('location');
     }
 
+    public function location()
+    {
+        return $this
+        ->belongsTo(Location::class ,'location_id', 'id');
+    }
+
+    public function generateOtpCode ()
+    {
+        $this->timestamps = false ;
+        $this->otp_code = rand(1000 , 9999);
+        $this->otp_expire_time = now()->addMinutes(10);
+        $this->save();
+    } 
+
+
     public function getProfileImageAttribute ($value)
     {
         return '\images\user\profile_images\\'.$value;
@@ -86,11 +104,11 @@ class User extends Authenticatable implements JWTSubject
 
     public function getNationalIdFrontImageAttribute ($value)
     {
-        return '\images\user\national_id_front_image\\'.$value;
+        return '\images\user\national_id_front_images\\'.$value;
     }
 
     public function getNationalIdBackImageAttribute ($value)
     {
-        return '\images\user\national_id_back_image\\'.$value;
+        return '\images\user\national_id_back_images\\'.$value;
     }
 }

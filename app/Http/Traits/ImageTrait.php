@@ -2,7 +2,7 @@
 
 namespace App\Http\Traits ;
 
-
+use Exception;
 use Symfony\Component\HttpFoundation\File\File;
 
 
@@ -25,9 +25,22 @@ trait ImageTrait
         return true ;
     }
 
-    private function unlinkImage (String $imagePath)
-    {
-        return unlink(public_path($imagePath));
+    private function unlinkImage (String | array $imagePaths)
+    {   
+        if (is_string($imagePaths))
+        {
+            unlink(public_path($imagePaths));
+        }
+        else if (is_array($imagePaths))
+        {
+            foreach ($imagePaths as $imagePath)
+            {
+                if (is_string($imagePath))
+                {
+                    unlink(public_path($imagePath));
+                }
+            }
+        }
     }
 }
 
