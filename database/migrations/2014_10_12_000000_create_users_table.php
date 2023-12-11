@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('otp_code')->nullable();
             $table->dateTime('otp_expire_time')->nullable();
             $table->dateTime('phone_verified_at')->nullable();
-            $table->unsignedBigInteger('location_id')->nullable();
+            $table->unsignedBigInteger('location_id');
             $table->foreign('location_id')
             ->references('id')
             ->on('locations')

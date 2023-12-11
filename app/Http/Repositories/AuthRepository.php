@@ -18,7 +18,8 @@ class AuthRepository implements AuthInterface {
     use ImageTrait ;
     use ApiResponseTrait ;
     
-    public function register ($request){
+    public function register ($request)
+    {
         
         //* validate the request 
         $validation = Validator::make($request->all() ,[
@@ -78,7 +79,7 @@ class AuthRepository implements AuthInterface {
     public function login ($request)
     {
         $validations = Validator::make($request->all() , [
-            'phone'     => 'required' ,
+            'phone'     => 'required | exists:users,phone' ,
             'password'  => ['required' , new StrongPasswordRule] ,
         ]);
 
@@ -109,7 +110,7 @@ class AuthRepository implements AuthInterface {
 
         return $this->apiResponse( 200 , 'successful login' , null , $array );
     }
-    
+
 
     public function generateOtpCode ($request)
     {
@@ -131,18 +132,19 @@ class AuthRepository implements AuthInterface {
             $user = User::where('id',Auth::user()->id)->first();
         }
         
-        $user->generateOtpCode();
-        $account_sid = getenv('TWILIO_ACCOUNT_SID');
-        $auth_token = getenv('TWILIO_AUTH_TOKEN');
-        $client = new Client($account_sid, $auth_token);
-        $twilio_number = +12674334973 ;
-        $client->messages->create(
-        $user->phone,
-        array(
-            'from' => $twilio_number,
-            'body' => 'your otp is '.$user->otp_code
-        )
-        );
+        //* uncomment them to send otp code 
+        // $user->generateOtpCode();
+        // $account_sid = getenv('TWILIO_ACCOUNT_SID');
+        // $auth_token = getenv('TWILIO_AUTH_TOKEN');
+        // $twilio_number = getenv('TWILIO_NUMBER') ;
+        // $client = new Client($account_sid, $auth_token);
+        // $client->messages->create(
+        // $user->phone,
+        // array(
+        //     'from' => $twilio_number,
+        //     'body' => 'your otp is '.$user->otp_code
+        // )
+        // );
         return $this->apiResponse(200 , 'otp code generated successfully');
     }
 

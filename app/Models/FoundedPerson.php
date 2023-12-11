@@ -16,6 +16,7 @@ class FoundedPerson extends Model
         "description",
         "location_id",
         "founder_id",
+        "police_station_id",
         "founded_at",
     ];
 
@@ -27,6 +28,11 @@ class FoundedPerson extends Model
     public function location()
     {
         return $this->belongsTo(Location::class , 'location_id' , 'id');
+    }
+
+    public function policeStation()
+    {
+        return $this->belongsTo(PoliceStation::class , 'police_station_id' , 'id');
     }
 
     public function getImageAttribute($value)

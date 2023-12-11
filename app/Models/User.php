@@ -79,7 +79,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this
         ->hasMany(FoundedPerson::class , 'founder_id' , 'id')
-        ->with('location');
+        ->with(['location' , 'policeStation']);
     }
 
     public function location()

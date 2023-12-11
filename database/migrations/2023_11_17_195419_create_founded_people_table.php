@@ -21,6 +21,8 @@ return new class extends Migration
             $table->foreign('location_id')->references('id')->on('locations')->onDelete('CASCADE');
             $table->unsignedBigInteger('founder_id');
             $table->foreign('founder_id')->references('id')->on('users')->onDelete('CASCADE');
+            $table->unsignedBigInteger('police_station_id');
+            $table->foreign('police_station_id')->references('id')->on('police_stations')->onDelete('CASCADE');
             $table->date('founded_at')->nullable();
             $table->timestamps();
         });

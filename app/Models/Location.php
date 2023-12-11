@@ -30,4 +30,9 @@ class Location extends Model
         return $this->hasMany(FoundedPerson::class , 'location_id' , 'id');
     }
 
+    public function policeStation()
+    {
+        return $this->hasOne(PoliceStation::class , 'location_id' , 'id');
+    }
+
 }

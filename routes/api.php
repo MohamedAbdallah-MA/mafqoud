@@ -24,7 +24,8 @@ Route::post('/auth/otp/generate'   , [AuthController::class , 'generateOtpCode']
 Route::post('/auth/otp/check'   , [AuthController::class , 'checkOtpCode']);
 Route::post('/auth/password/reset'   , [AuthController::class , 'resetPassword']);
 
-Route::group(['middleware' => ['auth' , 'twoFactorAuth']] , function() {
+// TODO: add middleware 'twoFactorAuth' to the next group of routes
+Route::group(['middleware' => ['auth' ,]] , function() {
 
     Route::group(['prefix' => 'user'  , 'as' => 'user.'] , function() {
 

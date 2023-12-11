@@ -56,6 +56,7 @@ class UserRepository implements UserInterface {
                     'country'       => $foundedPerson->location->country ,
                     'state'         => $foundedPerson->location->state ,
                     'city'          => $foundedPerson->location->city ,
+                    'police_station'=> $foundedPerson->policeStation->name ,
                     'founded_at'    => $foundedPerson->founded_at ,
                     'image'         => $foundedPersonImage ,
                 ];
@@ -119,6 +120,7 @@ class UserRepository implements UserInterface {
                     'country'       => $foundedPerson->location->country ,
                     'state'         => $foundedPerson->location->state ,
                     'city'          => $foundedPerson->location->city ,
+                    'police_station'=> $foundedPerson->policeStation->name ,
                     'founded_at'    => $foundedPerson->founded_at ,
                     'image'         => $foundedPersonImage ,
                 ];
