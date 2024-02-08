@@ -3,6 +3,7 @@
 namespace App\Http\Traits ;
 
 use Exception;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\File\File;
 
 
@@ -27,17 +28,17 @@ trait ImageTrait
 
     private function unlinkImage (String | array $imagePaths)
     {   
-        if (is_string($imagePaths))
+        if (is_string($imagePaths) && Storage::exists($imagePaths))
         {
-            unlink(public_path($imagePaths));
+                unlink(public_path($imagePaths));
         }
         else if (is_array($imagePaths))
         {
             foreach ($imagePaths as $imagePath)
             {
-                if (is_string($imagePath))
+                if ( is_string($imagePath) && Storage::exists($imagePath))
                 {
-                    unlink(public_path($imagePath));
+                        unlink(public_path($imagePath));
                 }
             }
         }
