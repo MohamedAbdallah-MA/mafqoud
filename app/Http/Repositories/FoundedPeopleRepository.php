@@ -95,7 +95,7 @@ class FoundedPeopleRepository implements FoundedPeopleInterface
         {
             foreach($foundedPeople as $foundedPerson)
             {
-                $foundedPersonImage = asset(public_path($foundedPerson->image));
+                $foundedPersonImage = $this->getImageUrl($foundedPerson->image);
                 $foundedPeopleInformation = [
                     'id'            => $foundedPerson->id ,
                     'name'          => $foundedPerson->name ,
@@ -110,7 +110,7 @@ class FoundedPeopleRepository implements FoundedPeopleInterface
                 ];
     
     
-                $founderProfileImage = asset(public_path($foundedPerson->founder->profile_image));
+                $founderProfileImage = $this->getImageUrl($foundedPerson->founder->profile_image);
                 $founderInformation = [
                     'name'          => $foundedPerson->founder->name ,
                     'phone'         => $foundedPerson->founder->phone ,
@@ -237,7 +237,7 @@ class FoundedPeopleRepository implements FoundedPeopleInterface
             'founded_at'        => ( $request->has('founded->at')                                                       ? $request->founded_at  : $foundedPerson->founded_at) ,
             'police_station_id' => ( $request->has('police_station')                                                    ? $policeStation->id    : $foundedPerson->police_station_id),
             'location_id'       => ( ( $request->has('country') && $request->has('state') && $request->has('city') )    ? $location->id         : $foundedPerson->location_id ) ,
-            'image'             => ( $request->has('image')                                                             ? $imageName            : array_slice( explode('\\' , $foundedPerson->image) , -1  )[0] ) , 
+            'image'             => ( $request->has('image')                                                             ? $imageName            : array_slice( explode('/' , $foundedPerson->image) , -1  )[0] ) , 
         ]);
 
         return $this->apiResponse(200 , 'founded person information updated successfully' );
@@ -257,7 +257,7 @@ class FoundedPeopleRepository implements FoundedPeopleInterface
         $foundedPerson = FoundedPerson::find($foundedPersonId);
 
         //* remove image from server
-        $this->unlinkImage($foundedPerson->image);
+        $this->deleteImage($foundedPerson->image);
 
         $foundedPerson->delete();
 

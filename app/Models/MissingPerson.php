@@ -32,6 +32,6 @@ class MissingPerson extends Model
 
     public function getImageAttribute($value)
     {
-        return '\images\missing_people\\'.$value ;
+        return 'mafqoud/images/missing_people/'.$value ;
     }
 }

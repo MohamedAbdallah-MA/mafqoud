@@ -99,16 +99,16 @@ class User extends Authenticatable implements JWTSubject
 
     public function getProfileImageAttribute ($value)
     {
-        return '\images\user\profile_images\\'.$value;
+        return 'mafqoud/images/user/profile_images/'.$value;
     }
 
     public function getNationalIdFrontImageAttribute ($value)
     {
-        return '\images\user\national_id_front_images\\'.$value;
+        return 'mafqoud/images/user/national_id_front_images/'.$value;
     }
 
     public function getNationalIdBackImageAttribute ($value)
     {
-        return '\images\user\national_id_back_images\\'.$value;
+        return 'mafqoud/images/user/national_id_back_images/'.$value;
     }
 }
