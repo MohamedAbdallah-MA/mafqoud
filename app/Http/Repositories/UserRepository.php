@@ -6,6 +6,7 @@ use App\Http\Traits\ImageTrait;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Traits\ApiResponseTrait;
 use App\Http\Interfaces\UserInterface;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,7 +17,8 @@ class UserRepository implements UserInterface {
     public function getUsers() 
     {
         $allUsers = [];
-        $users = User::with(['missingPeople' , 'foundedPeople'])->get();
+        $users = User::with(['location','missingPeople' , 'foundedPeople'])->get();
+
         foreach ($users as $user)
         {
             $userProfileImage = $this->getImageUrl($user->profile_image);
@@ -24,9 +26,9 @@ class UserRepository implements UserInterface {
                 'name'          => $user->name ,
                 'phone'         => $user->phone ,
                 'gender'        => $user->gender ,
-                'country'       => $user->country ,
-                'state'         => $user->state ,
-                'city'          => $user->city ,
+                'country'       => $user->location->country ,
+                'state'         => $user->location->state ,
+                'city'          => $user->location->city ,
                 'profile_image' => $userProfileImage ,
             ];
             
@@ -74,13 +76,64 @@ class UserRepository implements UserInterface {
         return $this->apiResponse( 200 , 'All Users with their missing and founded People' , null , $allUsers);
         
     }
+    public function getAllUsersPostsInRandomOrder() 
+    {
+        $allPosts = [];
+        $users = User::with(['missingPeople' , 'foundedPeople'])->get();
+        foreach ($users as $user)
+        {
+            $userProfileImage = $this->getImageUrl($user->profile_image);
+            $userData = [
+                'name'          => $user->name ,
+                'phone'         => $user->phone ,
+                'profile_image' => $userProfileImage ,
+            ];
+            
+            foreach ($user->missingPeople as $missingPerson) {
+                $missingPersonImage = $this->getImageUrl($missingPerson->image);
+                $allPosts []= [
+                    'id'                => $missingPerson->id ,
+                    'user_name'         => $userData['name'] ,
+                    'phone'             => $userData['phone'] ,
+                    'profile_image'     => $userData['profile_image'] ,
+                    'missing_name'      => $missingPerson->name ,
+                    'gender'            => $missingPerson->gender , 
+                    'description'       => $missingPerson->description ,
+                    'image'             => $missingPersonImage ,
+                    'created_at'        => $missingPerson->created_at->format('Y-m-d') ,
+                    'updated_at'        => $missingPerson->updated_at->format('Y-m-d') ,
+                ];
+            }
+            
+            
+            foreach ($user->foundedPeople as $foundedPerson) {
+                $foundedPersonImage = $this->getImageUrl($foundedPerson->image);
+                $allPosts [] = [
+                    'id'                => $foundedPerson->id ,
+                    'user_name'         => $userData['name'] ,
+                    'phone'             => $userData['phone'] ,
+                    'profile_image'     => $userData['profile_image'] ,
+                    'founded_name'      => $foundedPerson->name ,
+                    'gender'            => $foundedPerson->gender , 
+                    'description'       => $foundedPerson->description ,
+                    'image'             => $foundedPersonImage ,
+                    'created_at'        => $foundedPerson->created_at->format('Y-m-d') ,
+                    'updated_at'        => $foundedPerson->updated_at->format('Y-m-d') ,
+                ];
+            }
+            
+        }
+        shuffle($allPosts);
+        return $this->apiResponse( 200 , 'All Posts in random order' , null , $allPosts);
+        
+    }
 
     public function getUser() 
     {
 
         $userData = [];
         $user = User::where('id' , Auth::user()->id)
-        ->with(['missingPeople' , 'foundedPeople'])
+        ->with(['location','missingPeople' , 'foundedPeople'])
         ->first();
 
             $userProfileImage = $this->getImageUrl($user->profile_image);
@@ -88,9 +141,9 @@ class UserRepository implements UserInterface {
                 'name'          => $user->name ,
                 'phone'         => $user->phone ,
                 'gender'        => $user->gender ,
-                'country'       => $user->country ,
-                'state'         => $user->state ,
-                'city'          => $user->city ,
+                'country'       => $user->location->country ,
+                'state'         => $user->location->state ,
+                'city'          => $user->location->city ,
                 'profile_image' => $userProfileImage ,
             ];
             

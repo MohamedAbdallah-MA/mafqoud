@@ -17,6 +17,11 @@ class UserController extends Controller
     {
         return $this->userInterface->getUsers();
     }
+    
+    public function getAllUsersPostsInRandomOrder()
+    {
+        return $this->userInterface->getAllUsersPostsInRandomOrder();
+    }
 
     public function getUser()
     {

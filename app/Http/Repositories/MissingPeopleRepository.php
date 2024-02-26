@@ -59,8 +59,9 @@ class MissingPeopleRepository implements MissingPeopleInterface
             'name'          => $request->name ,
             'gender'        => $request->gender ,
             'description'   => $request->description ,
+            'losted_at'     => $request->losted_at ,
             'location_id'   => $location->id ,
-            'image'         => $imageName       
+            'image'         => $imageName      
         ])->searchers()->attach(Auth::user()->id);
 
         return $this->apiResponse(200 , 'missing person information added successfully' );
