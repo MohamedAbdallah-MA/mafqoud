@@ -5,41 +5,64 @@ namespace App\Http\Traits ;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\File\File;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 
 trait ImageTrait
 {
-    private function setImageName (File $image ,String $imageReference  ) : string
+    use ApiResponseTrait;
+    public function setImageName (File $image ,String $imageReference  ) : string
     {
-        $imageMimeType = explode('/' , $image->getMimeType() )  ;
-        $imageName = time()."_{$imageReference}.{$imageMimeType[1]}" ;
+        $imageName = time()."_{$imageReference}" ;
         return $imageName ;
     }
 
-    private function uploadImage (File $image ,String $imageName ,String $path , string $oldPath = null) : bool
+    public function getImageUrl (String $imagePath)
     {
-        $image->move(public_path('images'.DIRECTORY_SEPARATOR.$path) , $imageName) ;
-        if (! is_null($oldPath))
-        {
-            $this->unlinkImage($oldPath) ;
+        try {
+            return Cloudinary::getUrl($imagePath);
+        } catch (Exception $e) {
+            return $this->apiResponse(500 , $e->getMessage() , $e);
         }
-        return true ;
     }
 
-    private function unlinkImage (String | array $imagePaths)
-    {   
-        if (is_string($imagePaths) && Storage::exists($imagePaths))
-        {
-                unlink(public_path($imagePaths));
+    public function uploadImage (File $image ,String $imageName ,String $path , string $oldPath = null) 
+    {
+        try {
+            $uploadedImage = Cloudinary::upload($image->getRealPath(), [
+                'folder' => 'mafqoud/images/'.$path,
+                'public_id' => $imageName,
+            ]);
+        } catch (Exception $e) {
+            return $this->apiResponse(500 , $e->getMessage() , $e);
         }
-        else if (is_array($imagePaths))
+
+        //delete old image
+        if (! is_null($oldPath))
         {
-            foreach ($imagePaths as $imagePath)
-            {
-                if ( is_string($imagePath) && Storage::exists($imagePath))
-                {
-                        unlink(public_path($imagePath));
-                }
+            $this->deleteImage($oldPath) ;
+        }
+
+        return  $uploadedImage ;
+    }
+
+    public function deleteImage (String $imagePath) 
+    {   
+        try {
+            Cloudinary::destroy($imagePath);
+        } catch (Exception $e) {
+            return $this->apiResponse(500 , $e->getMessage() , $e);
+        }
+    }
+
+    public function deleteImages (array $imagesPaths)
+    {
+        foreach ($imagesPaths as $imagePath)
+        {
+            try {
+                $this->deleteImage($imagePath);
+            } catch (Exception $e) {
+                return $this->apiResponse(500 , $e->getMessage() , $e);
             }
         }
     }
@@ -49,5 +72,4 @@ trait ImageTrait
 
 
 
-?>
 

@@ -57,9 +57,9 @@ class AuthRepository implements AuthInterface {
         $profileImageName = $this->setImageName($request->profile_image , 'personal_image');
         
         //* upload images to server   
-        $this->uploadImage($request->national_id_front_image , $nationalIdFrontImageName , 'user\national_id_front_images');
-        $this->uploadImage($request->national_id_back_image , $nationalIdBackImageName , 'user\national_id_back_images');
-        $this->uploadImage($request->profile_image , $profileImageName , 'user\profile_images');
+        $this->uploadImage($request->national_id_front_image , $nationalIdFrontImageName , 'user/national_id_front_images');
+        $this->uploadImage($request->national_id_back_image , $nationalIdBackImageName , 'user/national_id_back_images');
+        $this->uploadImage($request->profile_image , $profileImageName , 'user/profile_images');
         //* insert user data into db
         User::create([
             'name'                      => $request->name ,

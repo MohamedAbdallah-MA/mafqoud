@@ -37,6 +37,6 @@ class FoundedPerson extends Model
 
     public function getImageAttribute($value)
     {
-        return '\images\founded_people\\'.$value ;
+        return 'mafqoud/images/founded_people/'.$value ;
     }
 }

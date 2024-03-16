@@ -31,6 +31,9 @@ Route::group(['middleware' => ['auth' ,]] , function() {
 
         Route::get('/get/all'   , [UserController::class ,'getUsers'])
         ->name('get.all');
+        
+        Route::get('/posts/get' , [UserController::class ,'getAllUsersPostsInRandomOrder'])
+        ->name('posts.get');
 
         Route::get('/get'       , [UserController::class ,'getUser'])
         ->name('get');

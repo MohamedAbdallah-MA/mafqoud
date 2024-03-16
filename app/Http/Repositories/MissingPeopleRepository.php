@@ -59,8 +59,9 @@ class MissingPeopleRepository implements MissingPeopleInterface
             'name'          => $request->name ,
             'gender'        => $request->gender ,
             'description'   => $request->description ,
+            'losted_at'     => $request->losted_at ,
             'location_id'   => $location->id ,
-            'image'         => $imageName       
+            'image'         => $imageName      
         ])->searchers()->attach(Auth::user()->id);
 
         return $this->apiResponse(200 , 'missing person information added successfully' );
@@ -75,7 +76,7 @@ class MissingPeopleRepository implements MissingPeopleInterface
         {
             foreach($missingPeople as $missingPerson)
             {
-                $missingPersonImage = asset(public_path($missingPerson->image));
+                $missingPersonImage = $this->getImageUrl($missingPerson->image);
                 $missingPeopleInformation = [
                     'id'            => $missingPerson->id ,
                     'name'          => $missingPerson->name ,
@@ -91,7 +92,7 @@ class MissingPeopleRepository implements MissingPeopleInterface
                 $searchersInformation = [];
                 foreach($missingPerson->searchers as $searcher)
                 {
-                    $seacherProfileImage = asset(public_path($searcher->profile_image));
+                    $seacherProfileImage = $this->getImageUrl($searcher->profile_image);
                     $searchersInformation[] = [
                         'name'          => $searcher->name ,
                         'phone'         => $searcher->phone ,
@@ -160,7 +161,7 @@ class MissingPeopleRepository implements MissingPeopleInterface
             'description'   => ( $request->has('description')                                                       ? $request->description : $missingPerson->description ) ,
             'losted_at'     => ( $request->has('losted->at')                                                        ? $request->losted_at   : $missingPerson->founded_at) ,
             'location_id'   => ( ( $request->has('country') && $request->has('state') && $request->has('city') )    ? $location->id         : $missingPerson->location_id ) ,
-            'image'         => ( $request->has('image')                                                             ? $imageName            : array_slice( explode('\\' , $missingPerson->image) , -1  )[0] ) , 
+            'image'         => ( $request->has('image')                                                             ? $imageName            : array_slice( explode('/' , $missingPerson->image) , -1  )[0] ) , 
         ]);
 
         return $this->apiResponse(200 , 'missing person information updated successfully' );
@@ -181,7 +182,7 @@ class MissingPeopleRepository implements MissingPeopleInterface
 
         $missingPerson->searchers()->detach();
 
-        $this->unlinkImage($missingPerson->image);
+        $this->deleteImage($missingPerson->image);
 
         $missingPerson->delete();
 
